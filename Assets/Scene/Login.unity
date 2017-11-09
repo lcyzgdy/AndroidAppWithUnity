@@ -128,7 +128,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &115476260
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1058,5 +1058,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c2e01bb55c5ce44bd7c2ea380dcc5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseUrl: http://127.0.0.1:8086
   errorBox: {fileID: 115476259}

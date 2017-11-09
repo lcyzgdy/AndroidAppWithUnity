@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class History : MonoBehaviour
+public class Evaluate : MonoBehaviour
 {
 	public void OnClick()
 	{
-		SceneManager.LoadScene("History");
+		SceneManager.LoadScene("Evaluate");
 	}
 }

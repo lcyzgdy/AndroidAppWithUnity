@@ -9,7 +9,7 @@ public class LineChart : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		InvokeRepeating("MyUpdate", 0, -1);
+		InvokeRepeating("MyUpdate", 0, 3);
 	}
 
 	void MyUpdate()
