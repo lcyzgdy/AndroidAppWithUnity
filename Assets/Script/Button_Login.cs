@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,7 +22,8 @@ public class Button_Login : MonoBehaviour
 	public async void OnClick()
 	{
 		var editText = GameObject.Find("InputField").GetComponent<InputField>().text;
-		HttpClient httpClient = new HttpClient();
+		//HttpClient httpClient = new HttpClient();
+		var httpClient = HttpWebRequest.CreateHttp(baseUrl);
 		errorBox.GetComponent<Text>().text = "123456";
 		LoginJsonStruct loginJson = new LoginJsonStruct
 		{
@@ -32,7 +32,8 @@ public class Button_Login : MonoBehaviour
 		};
 		var json = JsonUtility.ToJson(loginJson);
 		errorBox.GetComponent<Text>().text += httpClient.ToString();
-		StringContent content = new StringContent(json);
+		(httpClient.GetResponse() as HttpWebResponse).Respo
+		//StringContent content = new StringContent(json);
 		try
 		{
 			var res = await httpClient.PostAsync(baseUrl, content);

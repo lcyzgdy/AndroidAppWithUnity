@@ -1413,6 +1413,11 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114532332647523934, guid: 8b4cb3c5e94d08d48b4c511b5430e5ac,
+        type: 2}
+      propertyPath: m_Text
+      value: "\u5355\u624B\u884C\u8F66"
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8b4cb3c5e94d08d48b4c511b5430e5ac, type: 2}
   m_IsPrefabParent: 0
