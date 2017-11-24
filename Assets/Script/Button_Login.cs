@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,37 +17,47 @@ public class Button_Login : MonoBehaviour
 		public string password;
 	};
 
+	struct ResponseMessage
+	{
+		public int code;
+		public string msg;
+		public bool status;
+	}
+
 	public async void OnClick()
 	{
 		var editText = GameObject.Find("InputField").GetComponent<InputField>().text;
-		//HttpClient httpClient = new HttpClient();
-		var httpClient = HttpWebRequest.CreateHttp(baseUrl);
-		errorBox.GetComponent<Text>().text = "123456";
+		HttpClient httpClient = new HttpClient();
+		//var httpClient = WebRequest.CreateHttp(baseUrl);
+		//httpClient.Method = "POST";
+		//errorBox.GetComponent<Text>().text = "123456";
 		LoginJsonStruct loginJson = new LoginJsonStruct
 		{
 			account = editText,
 			password = "20151234"
 		};
 		var json = JsonUtility.ToJson(loginJson);
-		errorBox.GetComponent<Text>().text += httpClient.ToString();
-		(httpClient.GetResponse() as HttpWebResponse).Respo
-		//StringContent content = new StringContent(json);
+		var jsonByte = Encoding.UTF8.GetBytes(json.ToCharArray());
+		//errorBox.GetComponent<Text>().text += httpClient.ToString();
+		//httpClient.GetRequestStream().Write(jsonByte, 0, jsonByte.Length);
+		StringContent content = new StringContent(json);
 		try
 		{
 			var res = await httpClient.PostAsync(baseUrl, content);
-			errorBox.GetComponent<Text>().text += res.ToString();
+			//var res = (await httpClient.GetResponseAsync()) as HttpWebResponse;
 			if (res.StatusCode != HttpStatusCode.OK) throw new Exception("Http Client Error");
-			print(await res.Content.ReadAsStringAsync());
+			var jsonMsg = JsonUtility.FromJson<ResponseMessage>(await res.Content.ReadAsStringAsync());
+			if (!jsonMsg.status) throw new Exception("帐户名或密码错误");
 			SceneManager.LoadScene("Evaluate");
 			await Task.Delay(3000);
 		}
 		catch (Exception e)
 		{
 			print(e.Message);
-			//errorBox.SetActive(true);
-			errorBox.GetComponent<Text>().text += e.Message;
-			//await Task.Delay(3000);
-			//errorBox.SetActive(false);
+			errorBox.SetActive(true);
+			errorBox.GetComponent<Text>().text = e.Message;
+			await Task.Delay(5000);
+			errorBox.SetActive(false);
 		}
 	}
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Http;
 using UnityEngine;
 
 public class ListDenger : MonoBehaviour
