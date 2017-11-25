@@ -11,10 +11,12 @@ public class StartDetection : MonoBehaviour
 	private int width = 720;
 	private int height = 1280;
 	private int cameraFps = 30;
+	private HttpClient httpClient;
 
-	private string baseUrl;
+	private string baseUrl = "http://123.207.64.210:7000/api/user/start_drive";
 
 	[SerializeField] GameObject errorBox;
+	[SerializeField] GameObject orb;
 
 	public void OnClickAsync()
 	{
@@ -26,14 +28,14 @@ public class StartDetection : MonoBehaviour
 		else
 		{
 			DetectionEnd();
-			GetComponentInChildren<Text>().text = "开始检测";
 		}
 	}
 
 	private void DetectionEnd()
 	{
+		GetComponentInChildren<Text>().text = "开始检测";
 		webCameraTexture.Stop();
-		GetComponent<Button>().enabled = true;
+		orb.GetComponent<Detecte>().OnDetecteEnd();
 		CancelInvoke();
 		GC.Collect();
 	}
@@ -54,7 +56,7 @@ public class StartDetection : MonoBehaviour
 		WebCamDevice[] devices = WebCamTexture.devices;
 
 		var frontCamera = (from i in devices
-						   where i.isFrontFacing == true
+						   where i.isFrontFacing
 						   select i).ToArray();
 		if (frontCamera.Length == 0)
 		{
@@ -64,31 +66,52 @@ public class StartDetection : MonoBehaviour
 		{
 			webCameraTexture = new WebCamTexture(frontCamera[0].name, width, height, cameraFps);
 		}
-
+		httpClient = new HttpClient();
+		orb.SetActive(true);
+		orb.GetComponent<Detecte>().OnDetecteBegin();
 		webCameraTexture.Play();
-		GetComponent<Button>().enabled = false;
+		tex = new Texture2D(webCameraTexture.width, webCameraTexture.height);
 		InvokeRepeating("CutAndUpload", 0, 3);
 	}
+	private Texture2D tex;
 
 	private async void CutAndUpload()
 	{
-		HttpClient httpClient = new HttpClient();
-		Texture2D tex = new Texture2D(512, 512);
-		tex.SetPixels32(webCameraTexture.GetPixels32());
+		print(webCameraTexture.GetPixels().Length);
+		print(tex.GetPixels().Length);
+		tex.SetPixels(webCameraTexture.GetPixels());
 		tex.Apply();
+		//Graphics.Blit(webCameraTexture, renderTexture);
+		//var img = GameObject.Find("DebugImage").GetComponent<Image>();
+		//img.sprite = Sprite.Create(tex, new Rect(0, 0, 348.5f, 348.5f), Vector2.zero);
 		using (MemoryStream ms = new MemoryStream(tex.EncodeToPNG()))
 		{
 			StreamContent content = new StreamContent(ms);
 			try
 			{
 				var res = await httpClient.PostAsync(baseUrl, content);
-				if (res.StatusCode != System.Net.HttpStatusCode.OK) throw new Exception("Http Error");
+				if (res.StatusCode != System.Net.HttpStatusCode.OK) throw new MyHttpException();
 				var json = await res.Content.ReadAsStringAsync();
-				JsonUtility.FromJson<int>(json);
+
+				print(json);
+			}
+			catch (MyHttpException e)
+			{
+				errorBox.SetActive(true);
+				errorBox.GetComponent<Text>().text = "网络错误，请检查后重试";
+				DetectionEnd();
+				await Task.Delay(5000);
+				errorBox.SetActive(false);
 			}
 			catch (Exception e)
 			{
+				errorBox.SetActive(true);
+				errorBox.GetComponent<Text>().text = "未知错误，请重试";
+				DetectionEnd();
+				await Task.Delay(5000);
+				errorBox.SetActive(false);
 			}
 		}
+
 	}
 }

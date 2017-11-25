@@ -22,10 +22,9 @@ public class HttpClient
 
 	public async Task<HttpResponse> PostAsync<T>(string url, Content<T> content)
 	{
-		if (request == null)
-		{
-			request = HttpWebRequest.CreateHttp(url);
-		}
+		request = HttpWebRequest.CreateHttp(url);
+		//Console.WriteLine(request.Host);
+		//request. = url;
 		request.Method = "POST";
 		await request.GetRequestStream().WriteAsync(content.ReadAsByteArray(), 0, 0);
 		var req = await request.GetResponseAsync();
@@ -157,4 +156,15 @@ public abstract class Content<T> : System.IDisposable
 	public abstract Task<string> ReadAsStringAsync();
 	public abstract Task<byte[]> ReadAsByteArrayAsync();
 	public abstract byte[] ReadAsByteArray();
+}
+
+public class MyHttpException : Exception
+{
+	public MyHttpException()
+	{
+	}
+
+	public MyHttpException(string message) : base(message)
+	{
+	}
 }
