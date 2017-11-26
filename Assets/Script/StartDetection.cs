@@ -36,6 +36,8 @@ public class StartDetection : MonoBehaviour
 		GetComponentInChildren<Text>().text = "开始检测";
 		webCameraTexture.Stop();
 		orb.GetComponent<Detecte>().OnDetecteEnd();
+		GameObject.Find("LineChart").GetComponent<ChartMove>().StopMove();
+		GameObject.Find("LineChart2").GetComponent<ChartMove>().StopMove();
 		CancelInvoke();
 		GC.Collect();
 	}
@@ -70,6 +72,8 @@ public class StartDetection : MonoBehaviour
 		orb.SetActive(true);
 		orb.GetComponent<Detecte>().OnDetecteBegin();
 		webCameraTexture.Play();
+		GameObject.Find("LineChart").GetComponent<ChartMove>().StartMove();
+		GameObject.Find("LineChart2").GetComponent<ChartMove>().StartMove();
 		tex = new Texture2D(webCameraTexture.width, webCameraTexture.height);
 		InvokeRepeating("CutAndUpload", 0, 3);
 	}

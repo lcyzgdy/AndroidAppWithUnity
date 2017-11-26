@@ -33,8 +33,8 @@ public class Button_Login : MonoBehaviour
 		//errorBox.GetComponent<Text>().text = "123456";
 		LoginJsonStruct loginJson = new LoginJsonStruct
 		{
-			account = editText,
-			password = "20151234"
+			account = "20144236",
+			password = "20144236"
 		};
 		var json = JsonUtility.ToJson(loginJson);
 		var jsonByte = Encoding.UTF8.GetBytes(json.ToCharArray());
