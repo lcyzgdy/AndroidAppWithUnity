@@ -13,10 +13,16 @@ public class StartDetection : MonoBehaviour
 	private int cameraFps = 30;
 	private HttpClient httpClient;
 
-	private string baseUrl = "http://123.207.64.210:7000/api/user/start_drive";
+	private string baseUrl = "http://123.207.64.210:7000/api/user/analyze";
+	private string cookie;
 
 	[SerializeField] GameObject errorBox;
 	[SerializeField] GameObject orb;
+
+	private void Start()
+	{
+		cookie = GameObject.Find("DataSaver").GetComponent<DataSaver>().GetData("Cookie");
+	}
 
 	public void OnClickAsync()
 	{
@@ -44,6 +50,19 @@ public class StartDetection : MonoBehaviour
 
 	private async void DetectionBegin()
 	{
+		httpClient = new HttpClient();
+		try
+		{
+			string url = "http://123.207.64.210:7000/api/user/start_drive";
+			StringContent @string = new StringContent(string.Empty);
+			var res = await httpClient.PostAsync(url, @string, cookie);
+			print(await res.Content.ReadAsStringAsync());
+		}
+		catch (Exception e)
+		{
+			print(e.Message);
+		}
+
 		if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
 			Application.RequestUserAuthorization(UserAuthorization.WebCam);
 		if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
@@ -68,7 +87,6 @@ public class StartDetection : MonoBehaviour
 		{
 			webCameraTexture = new WebCamTexture(frontCamera[0].name, width, height, cameraFps);
 		}
-		httpClient = new HttpClient();
 		orb.SetActive(true);
 		orb.GetComponent<Detecte>().OnDetecteBegin();
 		webCameraTexture.Play();
@@ -93,7 +111,7 @@ public class StartDetection : MonoBehaviour
 			StreamContent content = new StreamContent(ms);
 			try
 			{
-				var res = await httpClient.PostAsync(baseUrl, content);
+				var res = await httpClient.PostAsync(baseUrl, content, cookie);
 				if (res.StatusCode != System.Net.HttpStatusCode.OK) throw new MyHttpException();
 				var json = await res.Content.ReadAsStringAsync();
 
@@ -116,6 +134,5 @@ public class StartDetection : MonoBehaviour
 				errorBox.SetActive(false);
 			}
 		}
-
 	}
 }

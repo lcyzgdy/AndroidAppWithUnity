@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class Button_Login : MonoBehaviour
 {
 	private string baseUrl = "http://123.207.64.210:7000/api/account/login";
+	//private string baseUrl = "http://172.24.12.41:8080/login";
 	[SerializeField] private GameObject errorBox;
 
 	struct LoginJsonStruct
@@ -17,13 +18,45 @@ public class Button_Login : MonoBehaviour
 		public string password;
 	};
 
-	struct ResponseMessage
+	public struct ResponseMessage
 	{
 		public int code;
 		public string msg;
+		public UserData data;
 		public bool status;
-	}
+	};
 
+	public struct UserData
+	{
+		public string account;
+		public int age;
+		public int bad_record;
+		public string name;
+		public int work_age;
+	};
+	/*
+			int flag = 0;
+			for (int i = 1; i < resStr.Length - 1; i++)
+			{
+				if (resStr[i] == '{')
+				{
+					flag++;
+					resStr = resStr.Insert(i, "\"");
+					i++;
+				}
+				else if (resStr[i] == '}')
+				{
+					flag--;
+					i++;
+					resStr = resStr.Insert(i, "\"");
+				}
+				else if (resStr[i] == '\"' && flag > 0)
+				{
+					resStr = resStr.Insert(i, "\\");
+					i++;
+				}
+			}
+			resStr.Replace("\n", string.Empty);*/
 	public async void OnClick()
 	{
 		var editText = GameObject.Find("InputField").GetComponent<InputField>().text;
@@ -33,8 +66,8 @@ public class Button_Login : MonoBehaviour
 		//errorBox.GetComponent<Text>().text = "123456";
 		LoginJsonStruct loginJson = new LoginJsonStruct
 		{
-			account = "20144236",
-			password = "20144236"
+			account = editText,
+			password = editText
 		};
 		var json = JsonUtility.ToJson(loginJson);
 		var jsonByte = Encoding.UTF8.GetBytes(json.ToCharArray());
@@ -46,17 +79,29 @@ public class Button_Login : MonoBehaviour
 			var res = await httpClient.PostAsync(baseUrl, content);
 			//var res = (await httpClient.GetResponseAsync()) as HttpWebResponse;
 			if (res.StatusCode != HttpStatusCode.OK) throw new Exception("Http Client Error");
-			var jsonMsg = JsonUtility.FromJson<ResponseMessage>(await res.Content.ReadAsStringAsync());
+			var resStr = await res.Content.ReadAsStringAsync();
+			//print(resStr);
+			var jsonMsg = JsonUtility.FromJson<ResponseMessage>(resStr);
+			//print(jsonMsg.msg);
+			//print(jsonMsg.data);
 			if (!jsonMsg.status) throw new Exception("帐户名或密码错误");
+
+			string dataS = resStr.Substring(resStr.LastIndexOf('{'), resStr.IndexOf('}') - resStr.LastIndexOf('{') + 1);
+			//print(dataS);
 			var dataSaver = GameObject.Find("DataSaver");
-			DontDestroyOnLoad(dataSaver);
-			dataSaver.GetComponent<DataSaver>().SaveData("account", loginJson.account);
+			//var dataJson = JsonUtility.FromJson<UserData>(jsonMsg.data);
+			//dataSaver.GetComponent<DataSaver>().SaveStringData(jsonMsg.data);
+			dataSaver.GetComponent<DataSaver>().SaveStringData(dataS);
+			dataSaver.GetComponent<DataSaver>().SaveData("Cookie", res.Cookie);
+			print(res.Cookie);
+			//print(dataSaver.GetComponent<DataSaver>().GetStringData());
+			//DontDestroyOnLoad(dataSaver);
 			SceneManager.LoadScene("Evaluate");
 			await Task.Delay(3000);
 		}
 		catch (MyHttpException e)
 		{
-			print(e.Message);
+			//print(e.Message);
 			errorBox.SetActive(true);
 			errorBox.GetComponent<Text>().text = "网络错误，请检查后重试";
 			await Task.Delay(5000);

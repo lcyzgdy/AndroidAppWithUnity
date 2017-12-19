@@ -7,6 +7,7 @@ public class Evaluate : MonoBehaviour
 {
 	public void OnClick()
 	{
+		DontDestroyOnLoad(GameObject.Find("DataSaver"));
 		SceneManager.LoadScene("Evaluate");
 	}
 }

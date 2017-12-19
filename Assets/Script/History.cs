@@ -7,6 +7,7 @@ public class History : MonoBehaviour
 {
 	public void OnClick()
 	{
+		DontDestroyOnLoad(GameObject.Find("DataSaver"));
 		SceneManager.LoadScene("History");
 	}
 }
