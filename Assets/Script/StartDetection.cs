@@ -61,6 +61,7 @@ public class StartDetection : MonoBehaviour
 		catch (Exception e)
 		{
 			print(e.Message);
+			return;
 		}
 
 		if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
