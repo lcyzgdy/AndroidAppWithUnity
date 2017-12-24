@@ -6,7 +6,7 @@ public class ChartMove : MonoBehaviour
 {
 	private void Start()
 	{
-		print(transform.localPosition);
+		//print(transform.localPosition);
 	}
 	public void StartMove()
 	{

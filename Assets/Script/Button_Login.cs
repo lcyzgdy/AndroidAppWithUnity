@@ -34,29 +34,7 @@ public class Button_Login : MonoBehaviour
 		public string name;
 		public int work_age;
 	};
-	/*
-			int flag = 0;
-			for (int i = 1; i < resStr.Length - 1; i++)
-			{
-				if (resStr[i] == '{')
-				{
-					flag++;
-					resStr = resStr.Insert(i, "\"");
-					i++;
-				}
-				else if (resStr[i] == '}')
-				{
-					flag--;
-					i++;
-					resStr = resStr.Insert(i, "\"");
-				}
-				else if (resStr[i] == '\"' && flag > 0)
-				{
-					resStr = resStr.Insert(i, "\\");
-					i++;
-				}
-			}
-			resStr.Replace("\n", string.Empty);*/
+	
 	public async void OnClick()
 	{
 		var editText = GameObject.Find("InputField").GetComponent<InputField>().text;

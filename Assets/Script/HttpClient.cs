@@ -25,7 +25,7 @@ public class HttpClient
 		request = HttpWebRequest.CreateHttp(url);
 		if (cookie != "")
 		{
-			request.Headers.Add("Cookie", "session=.eJwljjkOwzAMwP6iOYNlHbbzmUKWJbRr0kxF_94A3QiQAz_wyCPOJ-zv44oNHq8FOxCRzswpi5IFVynoVli6mFjkqBY2bzLJGN5KGlPhpWiunbw5hsZgac6I7h1v0b2EV2qj6DCqIXenqZN9RDPGKs7ujTpZwAbXGcd_BuH7A-XCL7A.DRlmRw.VFiiHq-NIaJ8_dBcXaY5F4F2LOo");
+			request.Headers.Add("Cookie", cookie);
 		}
 		//Console.WriteLine(request.Host);
 		//request. = url;

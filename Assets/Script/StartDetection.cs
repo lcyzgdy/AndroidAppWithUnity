@@ -37,8 +37,11 @@ public class StartDetection : MonoBehaviour
 		}
 	}
 
-	private void DetectionEnd()
+	private async void DetectionEnd()
 	{
+		string url = "http://123.207.64.210:7000/api/user/end_drive";
+		var res = await httpClient.PostAsync(url, new StringContent(string.Empty), cookie);
+		print(await res.Content.ReadAsStringAsync());
 		GetComponentInChildren<Text>().text = "开始检测";
 		webCameraTexture.Stop();
 		orb.GetComponent<Detecte>().OnDetecteEnd();
@@ -55,6 +58,7 @@ public class StartDetection : MonoBehaviour
 		{
 			string url = "http://123.207.64.210:7000/api/user/start_drive";
 			StringContent @string = new StringContent(string.Empty);
+			//print(cookie);
 			var res = await httpClient.PostAsync(url, @string, cookie);
 			print(await res.Content.ReadAsStringAsync());
 		}
@@ -100,8 +104,8 @@ public class StartDetection : MonoBehaviour
 
 	private async void CutAndUpload()
 	{
-		print(webCameraTexture.GetPixels().Length);
-		print(tex.GetPixels().Length);
+		//print(webCameraTexture.GetPixels().Length);
+		//print(tex.GetPixels().Length);
 		tex.SetPixels(webCameraTexture.GetPixels());
 		tex.Apply();
 		//Graphics.Blit(webCameraTexture, renderTexture);
@@ -112,6 +116,14 @@ public class StartDetection : MonoBehaviour
 			StreamContent content = new StreamContent(ms);
 			try
 			{
+				//print(content.ReadAsByteArray());
+				FileStream fs = new FileStream("temp.png", FileMode.OpenOrCreate);
+				BinaryWriter writer = new BinaryWriter(fs);
+				var byteArr = content.ReadAsByteArray();
+				writer.Write(byteArr);
+				//print(byteArr.Length);
+				//fs.Write(byteArr, 0, byteArr.Length);
+				fs.Close();
 				var res = await httpClient.PostAsync(baseUrl, content, cookie);
 				if (res.StatusCode != System.Net.HttpStatusCode.OK) throw new MyHttpException();
 				var json = await res.Content.ReadAsStringAsync();
@@ -130,6 +142,7 @@ public class StartDetection : MonoBehaviour
 			{
 				errorBox.SetActive(true);
 				errorBox.GetComponent<Text>().text = "未知错误，请重试";
+				print(e.Message);
 				DetectionEnd();
 				await Task.Delay(5000);
 				errorBox.SetActive(false);
