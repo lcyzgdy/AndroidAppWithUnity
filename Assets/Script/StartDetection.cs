@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,11 +14,17 @@ public class StartDetection : MonoBehaviour
 	private int cameraFps = 30;
 	private HttpClient httpClient;
 
-	private string baseUrl = "http://123.207.64.210:7000/api/user/analyze";
+	private string baseUrl = "http://120.79.91.188:7000/api/user/analyze";
 	private string cookie;
 
 	[SerializeField] GameObject errorBox;
 	[SerializeField] GameObject orb;
+
+	struct ResponseMessage
+	{
+		public string data;
+		public bool status;
+	}
 
 	private void Start()
 	{
@@ -39,9 +46,20 @@ public class StartDetection : MonoBehaviour
 
 	private async void DetectionEnd()
 	{
-		string url = "http://123.207.64.210:7000/api/user/end_drive";
+		string url = "http://120.79.91.188:7000/api/user/end_drive";
 		var res = await httpClient.PostAsync(url, new StringContent(string.Empty), cookie);
 		print(await res.Content.ReadAsStringAsync());
+
+		string url2 = "http://120.79.91.188:7000/api/user/score";
+		var res2 = await httpClient.PostAsync(url2, new StringContent(string.Empty), cookie);
+		var json = await res2.Content.ReadAsStringAsync();
+		print(json);
+		ResponseMessage rm = JsonUtility.FromJson<ResponseMessage>(json);
+		if (rm.status)
+		{
+			GameObject.Find("CurrentText").GetComponent<Text>().text = rm.data;
+		}
+
 		GetComponentInChildren<Text>().text = "开始检测";
 		webCameraTexture.Stop();
 		orb.GetComponent<Detecte>().OnDetecteEnd();
@@ -56,7 +74,7 @@ public class StartDetection : MonoBehaviour
 		httpClient = new HttpClient();
 		try
 		{
-			string url = "http://123.207.64.210:7000/api/user/start_drive";
+			string url = "http://120.79.91.188:7000/api/user/start_drive";
 			StringContent @string = new StringContent(string.Empty);
 			//print(cookie);
 			var res = await httpClient.PostAsync(url, @string, cookie);
@@ -97,7 +115,7 @@ public class StartDetection : MonoBehaviour
 		webCameraTexture.Play();
 		GameObject.Find("LineChart").GetComponent<ChartMove>().StartMove();
 		GameObject.Find("LineChart2").GetComponent<ChartMove>().StartMove();
-		tex = new Texture2D(webCameraTexture.width, webCameraTexture.height);
+		tex = new Texture2D(webCameraTexture.width, webCameraTexture.height, TextureFormat.ARGB32, false);
 		InvokeRepeating("CutAndUpload", 0, 3);
 	}
 	private Texture2D tex;
@@ -111,20 +129,19 @@ public class StartDetection : MonoBehaviour
 		//Graphics.Blit(webCameraTexture, renderTexture);
 		//var img = GameObject.Find("DebugImage").GetComponent<Image>();
 		//img.sprite = Sprite.Create(tex, new Rect(0, 0, 348.5f, 348.5f), Vector2.zero);
-		using (MemoryStream ms = new MemoryStream(tex.EncodeToPNG()))
+		//byte[] byteArr;
+		//var sp = GetComponent<SaveToPng>();
+		//sp.inputTex = webCameraTexture;
+		//sp.SaveRenderTextureToPNG(sp.inputTex, sp.outShader, Application.dataPath, "ok.png", out byteArr);
+		using (MemoryStream ms = new MemoryStream(tex.EncodeToJPG()))
 		{
 			StreamContent content = new StreamContent(ms);
 			try
 			{
-				//print(content.ReadAsByteArray());
-				FileStream fs = new FileStream("temp.png", FileMode.OpenOrCreate);
-				BinaryWriter writer = new BinaryWriter(fs);
-				var byteArr = content.ReadAsByteArray();
-				writer.Write(byteArr);
-				//print(byteArr.Length);
-				//fs.Write(byteArr, 0, byteArr.Length);
-				fs.Close();
-				var res = await httpClient.PostAsync(baseUrl, content, cookie);
+				//var byteArr = content.ReadAsByteArray();
+				//File.WriteAllBytes("temp.jpg", content.ReadAsByteArray());
+
+				var res = await httpClient.PostAsync(baseUrl, content, "octet-stream", cookie);
 				if (res.StatusCode != System.Net.HttpStatusCode.OK) throw new MyHttpException();
 				var json = await res.Content.ReadAsStringAsync();
 
@@ -143,7 +160,7 @@ public class StartDetection : MonoBehaviour
 				errorBox.SetActive(true);
 				errorBox.GetComponent<Text>().text = "未知错误，请重试";
 				print(e.Message);
-				DetectionEnd();
+				//DetectionEnd();
 				await Task.Delay(5000);
 				errorBox.SetActive(false);
 			}

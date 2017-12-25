@@ -8,7 +8,8 @@ using UnityEngine.UI;
 
 public class Button_Login : MonoBehaviour
 {
-	private string baseUrl = "http://123.207.64.210:7000/api/account/login";
+	//private string baseUrl = "http://123.207.64.210:7000/api/account/login";
+	private string baseUrl = "http://120.79.91.188:7000/api/account/login";
 	//private string baseUrl = "http://172.24.12.41:8080/login";
 	[SerializeField] private GameObject errorBox;
 
@@ -34,7 +35,13 @@ public class Button_Login : MonoBehaviour
 		public string name;
 		public int work_age;
 	};
-	
+
+	public void SignUpButtonClick_LoginScene()
+	{
+		SceneManager.LoadScene("SignUp");
+	}
+
+
 	public async void OnClick()
 	{
 		var editText = GameObject.Find("InputField").GetComponent<InputField>().text;

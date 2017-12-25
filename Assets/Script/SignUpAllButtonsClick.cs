@@ -11,7 +11,6 @@ public class SignUpAllButtonsClick : MonoBehaviour
 	{
 		SceneManager.LoadScene("Login");
 	}
-
 	public struct ResponseMessage
 	{
 		public int code;
@@ -29,7 +28,7 @@ public class SignUpAllButtonsClick : MonoBehaviour
 		public int work_start_time;
 	}
 
-	private const string baseUrl = "http://123.207.64.210:7000/api/account/regester";
+	private const string baseUrl = "http://120.79.91.188:7000/api/account/regester";
 
 	public async void SignUpButtonClick()
 	{
@@ -42,10 +41,19 @@ public class SignUpAllButtonsClick : MonoBehaviour
 			birth = Convert.ToInt32(GameObject.Find("Age").GetComponent<InputField>().text),
 			work_start_time = 1
 		};
-		var json = JsonUtility.ToJson(info);
-		var res = await httpClient.PostAsync(baseUrl, new StringContent(json));
-		if (res.StatusCode != System.Net.HttpStatusCode.OK) throw new Exception("Internet error");
-		var resJson = JsonUtility.FromJson<ResponseMessage>(await res.Content.ReadAsStringAsync());
-
+		try
+		{
+			var json = JsonUtility.ToJson(info);
+			var res = await httpClient.PostAsync(baseUrl, new StringContent(json));
+			if (res.StatusCode != System.Net.HttpStatusCode.OK) throw new Exception("Internet error");
+			var resJson = JsonUtility.FromJson<ResponseMessage>(await res.Content.ReadAsStringAsync());
+			if (!resJson.status) throw new Exception(resJson.msg);
+		}
+		catch (Exception e)
+		{
+			GameObject.Find("DebugBox").GetComponent<Text>().text = e.Message;
+			return;
+		}
+		ReturnButtonClick();
 	}
 }

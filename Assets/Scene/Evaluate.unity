@@ -1317,7 +1317,7 @@ GameObject:
   - component: {fileID: 1249729543}
   - component: {fileID: 1249729542}
   m_Layer: 5
-  m_Name: Text
+  m_Name: CurrentText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1878,7 +1878,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 826b17e21869d3e47924ef2cf664e3a5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1924,7 +1924,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 907, y: -538}
+  m_AnchoredPosition: {x: 903, y: 76}
   m_SizeDelta: {x: 348.5, y: 348.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1988304113
@@ -2056,6 +2056,7 @@ GameObject:
   - component: {fileID: 1999782780}
   - component: {fileID: 1999782779}
   - component: {fileID: 1999782782}
+  - component: {fileID: 1999782783}
   m_Layer: 5
   m_Name: CenterButton
   m_TagString: Untagged
@@ -2180,6 +2181,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   errorBox: {fileID: 1415552581}
   orb: {fileID: 210486958}
+--- !u!114 &1999782783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1999782777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5ca52b932535774ab3a82918bac6dcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outShader: {fileID: 4800000, guid: eedd291190137384cb07676228fd9a07, type: 3}
+  inputTex: {fileID: 0}
 --- !u!1 &2000457338
 GameObject:
   m_ObjectHideFlags: 0
